@@ -65,7 +65,7 @@ class Comments(db.Model):
     posts_id = db.Column(db.Integer, db.ForeignKey('posts.id'), nullable=False)
 
     def __repr__(self):
-        return f"Post('{self.title},')"
+        return f"'{self.comment_text},')"
 
 
 class Saves(db.Model):
@@ -74,3 +74,13 @@ class Saves(db.Model):
     posts_id = db.Column(db.Integer, db.ForeignKey('posts.id'), nullable=False)
     def __repr__(self):
         return f"/post/{self.posts_id}"
+
+
+class Notifications(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    user_id = db.Column(db.Integer, db.ForeignKey('user.id'), nullable=False)
+    post_id = db.Column(db.Integer, db.ForeignKey('posts.id'), nullable=False)
+    comment_id = db.Column(db.Integer, db.ForeignKey('comments.id'), nullable=False)
+    seen = db.Column(db.Boolean, default=False)
+    def __repr__(self):
+        return f"{self.post_id}"

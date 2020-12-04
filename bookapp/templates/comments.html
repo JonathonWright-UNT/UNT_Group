@@ -1,0 +1,27 @@
+{% extends "layout.html" %}
+{% block content %}
+<div class="comments-section">
+    <ul class="media-list">
+        <h3>{{ title }}</h3>
+        {% for comments in comment %}
+        <hr>
+        <li class="media">
+            <a href="#" class="pull-left">
+                <img src="{{url_for('static', filename='profile_pics/' + current_user.image_file)}}" alt="" class="rounded-circle article-img">
+            </a>
+            <div class="media-body">
+                <span class="text-muted pull-right">
+                    <small class="text-muted">{{ comments['comment_time'] }}</small>
+                </span>
+                <strong class="text-success"><a href="{{ url_for('user_post', username=comments['username']) }}">{{ comments['username']}}</a></strong>
+                <p class="comment">
+                    {{comments["comment_text"]}}
+                </p>
+                <span class="text-muted pull-right">
+                    <small  class="text-muted"><a href="{{ url_for('post', post_id=comments['post_link']) }}">Go to post</a></small>
+                </span>
+            </div>
+        </li>
+    {% endfor %}
+</div>
+{% endblock content %}

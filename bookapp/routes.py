@@ -8,7 +8,7 @@ from flask_wtf.file import FileField, FileAllowed
 from flask_login import login_user, current_user, logout_user, login_required
 from flask_mail import Message
 from bookapp.forms import RegistrationForm, LoginForm, PostForm, UpdateAccountForm, RequestResetForm, ResetPasswordForm, CommentForm, SearchForm
-from bookapp.models import User, Posts, Saves, Comments
+from bookapp.models import User, Posts, Saves, Comments, Notifications
 from bookapp import app, db, bcrypt, mail
 from bookapp.scrape import getBookDetails
 
@@ -125,6 +125,7 @@ def account():
         form.username.data = current_user.username
         form.email.data = current_user.email
         form.major.data = current_user.major
+        form.picture.data = current_user.image_file
         form.payment_profile.data = current_user.payment_profile
     image_file = url_for('static', filename='profile_pics/' + current_user.image_file)
     return render_template('account.html', title="Account", image_file=image_file, form=form)    
@@ -245,9 +246,48 @@ def new_manual_post():
     return render_template('create_manually.html', title="New Manual Post", form=form, legend='New Manual Post')
 
 
+@app.route('/comments')
+def comments():
+    comment = Comments.query.filter_by(user_id=current_user.id).all()
+    comments = []
+    for c in comment:
+        comments.append({
+            "username": current_user.username,
+            "img": current_user.image_file,
+            "comment_text": c.comment_text,
+            "comment_time": c.comment_time.strftime("%d-%m-%Y %I:%M%p"), 
+            "post_link": c.posts_id,
+        })
+    print(comments)
+    return render_template('comments.html', title="My Comments", comment=comments)
 
+@app.route('/notifications')
+def notifications():
+    notifs = Notifications.query.filter_by(user_id=current_user.id).order_by(Notifications.seen==False).all()
+    for notif in notifs:
+        notif.seen = True
+    db.session.commit()
+    ids = [n.comment_id for n in notifs]
+    comment = Comments.query.filter(Comments.id.in_(ids)).all()
+    ids = [item.user_id for item in comment]
+    users = User.query.filter(User.id.in_(ids)).all()
+    comments = []
+    for c in comment:
+        user = None
+        for item in users:
+            if item.id == c.user_id:
+                user = item
+                break
+        if user:
+            comments.append({
+                "username": user.username,
+                "img": user.image_file,
+                "comment_text": c.comment_text,
+                "comment_time": c.comment_time.strftime("%d-%m-%Y %I:%M%p"),
+                "post_link": c.posts_id,
+            })
 
-
+    return render_template('comments.html', title="Notifications", comment=comments)
 
 
 @app.route('/post/<int:post_id>', methods=['GET','POST'])
@@ -258,8 +298,6 @@ def post(post_id):
     users = User.query.filter(User.id.in_(ids)).all()
 
     cform = CommentForm()
-    
-
 
     if current_user.is_authenticated:
         
@@ -282,34 +320,15 @@ def post(post_id):
         if user:
             comments.append({
                 "username": user.username,
+                "img": user.image_file,
                 "comment_text": c.comment_text,
                 "comment_time": c.comment_time.strftime("%d-%m-%Y %I:%M%p")
             })
     
-    #cform.comment.data = "Enter text here"
+    #cform.comment.data = "Enter text here"     
 
     if cform.validate_on_submit():
         if cform.save.data:
-
-            print(";")
-            if len(is_saved) == 0:
-                
-                save = Saves(user_id=current_user.id, posts_id=post_id)
-                db.session.add(save)
-                db.session.commit()
-                flash('This post has been saved.', 'success')
-                return redirect(url_for('post', post_id=post_id))
-            else:
-                db.session.delete(is_saved[0])
-                db.session.commit()
-                flash('This post has been removed from saves.', 'success')
-                return redirect(url_for('post', post_id=post_id))        
-        else:
-            comment = Comments(comment_text=cform.comment.data, user_id=current_user.id, posts_id=post.id)
-
-    if cform.validate_on_submit():
-        if cform.save.data:
-            print(";")
             if len(is_saved) == 0:
                 save = Saves(user_id=current_user.id, posts_id=post_id)
                 db.session.add(save)
@@ -323,18 +342,26 @@ def post(post_id):
                 return redirect(url_for('post', post_id=post_id))        
         else:
             if cform.comment.data != "Enter text here":
+                comment = Comments(comment_text=cform.comment.data, user_id=current_user.id, posts_id=post.id)
                 db.session.add(comment)
+                db.session.commit()
+                notif = Notifications(comment_id=comment.id, post_id=post_id, user_id=post.author.id)
+                db.session.add(notif)
                 db.session.commit()
                 flash("Your comment was posted successfully!", "success")
                 return redirect(url_for('post', post_id=post.id))
    
     return render_template('post.html', title=Posts.title, post=post, form=cform, comment=comments)
 
+def notification_truth():
+    if current_user.is_authenticated:
+        n = Notifications.query.filter_by(user_id=current_user.id, seen=False).all()
+        if n:
+            print(n)
+            return True
+    return False
 
-
-
-
-
+app.jinja_env.globals.update(notification_truth=notification_truth)
 
 @app.route('/posts/saves', methods=['GET', 'POST'])
 @login_required
