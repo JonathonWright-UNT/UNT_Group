@@ -93,18 +93,6 @@ def logout():
     logout_user()
     return redirect(url_for('login'))
 
-def save_picture(form_picture):
-    random_hex = secrets.token_hex(8)
-    _, f_ext = os.path.splitext(form_picture.filename)
-    picture_fn = random_hex + f_ext
-    picture_path = os.path.join(app.root_path, 'static/profile_pics', picture_fn)
-
-    output_size = (125, 125)
-    i = Image.open(form_picture)
-    i.thumbnail(output_size)
-    i.save(picture_path)
-
-    return picture_fn
 
 @app.route('/account', methods=["GET", "POST"])
 @login_required
@@ -289,28 +277,10 @@ def post(post_id):
     
     #cform.comment.data = "Enter text here"
 
+   
     if cform.validate_on_submit():
         if cform.save.data:
-
-            print(";")
-            if len(is_saved) == 0:
-                
-                save = Saves(user_id=current_user.id, posts_id=post_id)
-                db.session.add(save)
-                db.session.commit()
-                flash('This post has been saved.', 'success')
-                return redirect(url_for('post', post_id=post_id))
-            else:
-                db.session.delete(is_saved[0])
-                db.session.commit()
-                flash('This post has been removed from saves.', 'success')
-                return redirect(url_for('post', post_id=post_id))        
-        else:
-            comment = Comments(comment_text=cform.comment.data, user_id=current_user.id, posts_id=post.id)
-
-    if cform.validate_on_submit():
-        if cform.save.data:
-            print(";")
+            #print(";")
             if len(is_saved) == 0:
                 save = Saves(user_id=current_user.id, posts_id=post_id)
                 db.session.add(save)
@@ -324,9 +294,15 @@ def post(post_id):
                 return redirect(url_for('post', post_id=post_id))        
         else:
             if cform.comment.data != "Enter text here":
+                comment = Comments(comment_text=cform.comment.data, user_id=current_user.id, posts_id=post.id)
                 db.session.add(comment)
                 db.session.commit()
                 flash("Your comment was posted successfully!", "success")
+                
+                post.comments.data = post.comments.data + 1
+                #push notification to user
+
+
                 return redirect(url_for('post', post_id=post.id))
    
     return render_template('post.html', title=Posts.title, post=post, form=cform, comment=comments)
@@ -369,7 +345,7 @@ def update_post(post_id):
         form.price.data = post.price
         form.major.data = post.major
         form.condition.data = post.condition
-    return render_template('create_post.html', title="Update Post", form=form)
+    return render_template('create_manually.html', title="Update Post", form=form)
 
 
 @app.route('/post/<int:post_id>/delete', methods=['POST'])

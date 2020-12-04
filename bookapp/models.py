@@ -17,6 +17,8 @@ class User(db.Model, UserMixin):
     payment_profile = db.Column(db.String(60))
     major = db.Column(db.String(20))
     posts = db.relationship('Posts', backref='author', lazy=True)
+
+    #notifications = db.Column(db.Integer, db.ForeignKey('posts.id'))
     
     def get_reset_token(self, expires_sec=1800):
         s = Serializer(app.config['SECRET_KEY'], expires_sec)
@@ -41,7 +43,7 @@ class Posts(db.Model):
     date_posted = db.Column(db.DateTime, nullable=False,
                             default=datetime.utcnow)
     title = db.Column(db.Text, nullable=False)
-    publisher = db.Column(db.Text)
+    publisher = db.Column(db.Text, nullable=True)
     writers = db.Column(db.Text)
     image_ref = db.Column(db.String(120), default='book.jpg')
     condition = db.Column(db.Text, nullable=False)
