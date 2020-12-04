@@ -205,9 +205,7 @@ def reset_token(token):
 @login_required
 def new_post():
     form = PostForm()
-    
-    if form.manual.data:
-        print('manual baby')
+
     if form.validate_on_submit():
 
         data = getBookDetails(form.isbn.data)
