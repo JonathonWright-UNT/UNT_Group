@@ -1,5 +1,5 @@
 body {
-    background: #fafafa;
+    background: #d3c4e3;
     color: #333333;
     margin-top: 5rem;
 }
@@ -9,11 +9,11 @@ body {
   }
   
   .bg-steel {
-    background-color: #5f788a;
+    background-color: #00853e;
   }
   
   .site-header .navbar-nav .nav-link {
-    color: #cbd5db;
+    color: #ffffff;
   }
   
   .site-header .navbar-nav .nav-link:hover {
@@ -25,19 +25,19 @@ body {
   }
   
   .content-section {
-    background: #ffffff;
+    background: #f9e0dc;
     padding: 10px 20px;
-    border: 1px solid #dddddd;
+    border: 1px solid #000000;
     border-radius: 3px;
     margin-bottom: 20px;
   }
   
   .article-title {
-    color: #444444;
+    color: #000000;
   }
   
   a.article-title:hover {
-    color: #428bca;
+    color: #48beff;
     text-decoration: none;
   }
   
@@ -58,7 +58,7 @@ body {
   }
   
   .article-metadata a:hover {
-    color: #333;
+    color: #ffffff;
     text-decoration: none;
   }
   
@@ -91,4 +91,76 @@ body {
   .comment-wrapper .media-list .media {
       border-bottom:1px dashed #efefef;
       margin-bottom:25px;
+  
+  .account-heading {
+    font-size: 2.5rem;
+  }
+  
+  .profile {
+	  max-width: 700px;
+	  display: block;
+	  margin-left: auto;
+	  margin-right: auto;
+	  margin-top: 10%;
+	  /*box-shadow: 0 2px 3px #000000;*/
+  }
+  
+  .user_photo {
+	  width: auto;
+	  height: auto;
+	  box-shadow: 0 2px 3px #000000;
+  }
+  
+  .left {
+	  width: 350px;
+	  padding: 0;
+	  border-radius: 10px;
+	  box-shadow: 0 0px 47px -4px #2d6e8b;
+  }
+  
+  .right {
+	  border-left: 1px solid #bdbdbd;
+	  width: 350px;
+	  height: 350px;
+	  margin-top: 10px;
+	  padding: 30px 10px 10px 10px;
+	  border-radius: 0 10px 10px 0;
+	  background-color: #bdbdbd;
+	  box-shadow: 0 0px 47px -4px #2d6e8b;
+  }
+  
+  .right h1 {
+	  font-weight: 600;
+  }
+  
+  .right h2 {
+	  font-size: 25px;
+  }
+  
+  .right p {
+	  padding-top: 10px;
+	  color: #acacac;
+  }
+  
+  .links a {
+	  text-decoration: none;
+	  padding-right: 10px;
+	  color: #acacac;
+  }
+  
+  .links a:hover {
+	  color: #000000;
+	  text-shadow: 0 1px 1px #2d6e8b;
+	  text-decoration: underline;
+  }
+  
+  .links a img {
+	  width: 30px;
+	  height: 30px;
+  }
+  
+  .btn-info {
+    color: #000000;
+    background-color: #48beff;
+    border-color: #48beff;
   }
