@@ -337,7 +337,7 @@ def post(post_id):
                 db.session.commit()
                 flash("Your comment was posted successfully!", "success")
                 
-                post.comments.data = post.comments.data + 1
+                #post.comments.data = post.comments.data + 1
                 #push notification to user
 
 
