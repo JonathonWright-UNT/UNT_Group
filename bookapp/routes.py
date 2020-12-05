@@ -93,18 +93,6 @@ def logout():
     logout_user()
     return redirect(url_for('login'))
 
-def save_picture(form_picture):
-    random_hex = secrets.token_hex(8)
-    _, f_ext = os.path.splitext(form_picture.filename)
-    picture_fn = random_hex + f_ext
-    picture_path = os.path.join(app.root_path, 'static/profile_pics', picture_fn)
-
-    output_size = (125, 125)
-    i = Image.open(form_picture)
-    i.thumbnail(output_size)
-    i.save(picture_path)
-
-    return picture_fn
 
 @app.route('/account', methods=["GET", "POST"])
 @login_required
@@ -206,7 +194,6 @@ def reset_token(token):
 @login_required
 def new_post():
     form = PostForm()
-
     if form.validate_on_submit():
 
         data = getBookDetails(form.isbn.data)
@@ -349,6 +336,11 @@ def post(post_id):
                 db.session.add(notif)
                 db.session.commit()
                 flash("Your comment was posted successfully!", "success")
+                
+                post.comments.data = post.comments.data + 1
+                #push notification to user
+
+
                 return redirect(url_for('post', post_id=post.id))
    
     return render_template('post.html', title=Posts.title, post=post, form=cform, comment=comments)
@@ -391,11 +383,12 @@ def update_post(post_id):
         flash("Your post was updated successfully!", "success")
         return redirect(url_for('post', post_id=post.id))
     elif request.method == 'GET':
+        form.title.data = post.title
         form.isbn.data = post.isbn
         form.price.data = post.price
         form.major.data = post.major
         form.condition.data = post.condition
-    return render_template('create_post.html', title="Update Post", form=form)
+    return render_template('create_manually.html', title="Update Post", form=form)
 
 
 @app.route('/post/<int:post_id>/delete', methods=['POST'])

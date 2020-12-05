@@ -122,14 +122,3 @@ class SearchForm(FlaskForm):
     submit = SubmitField('Search')
 
 
-class UpdateAccountForm(FlaskForm):
-    username = StringField('Username',
-                            validators=[DataRequired(), Length(min=2, max=20)])
-    email = StringField('Email',
-                            validators=[DataRequired(), Email()])
-    picture = FileField('Update Profile Picture', validators=[FileAllowed(['jpg', 'png'])])
-    major = StringField('Major',
-                           validators=[Length(min=2, max=20)])
-    payment_profile = StringField('Payment Profile',
-                           validators=[Length(min=2, max=25)])
-    submit = SubmitField('Update')
