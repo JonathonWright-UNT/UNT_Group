@@ -341,6 +341,7 @@ def update_post(post_id):
         flash("Your post was updated successfully!", "success")
         return redirect(url_for('post', post_id=post.id))
     elif request.method == 'GET':
+        form.title.data = post.title
         form.isbn.data = post.isbn
         form.price.data = post.price
         form.major.data = post.major
