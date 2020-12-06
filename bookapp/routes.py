@@ -200,7 +200,7 @@ def new_post():
             return redirect('/home')
         else:
             flash("There was an error fetching your textbook.\nPlease Check your ISBN", "warning")
-            #return render_template('create_manually.html', title="New")
+            return render_template('create_post.html', title="New Post", form=form, legend='New Post')
     return render_template('create_post.html', title="New Post", form=form, legend='New Post')
 
 

@@ -1,6 +1,10 @@
 {% extends "layout.html" %}
 {% block content %}
-<div class="content-section">
+<div id="loading" style="display: none;">
+    <h3>Gathering book data</h3>
+    <img src="https://media3.giphy.com/media/Mam839t1zmNyhxaMAu/giphy.gif">
+</div>
+<div id="content" class="content-section">
     <form method="POST" action="">
         {{ form.hidden_tag() }}
         <fieldset class="form-group">
@@ -61,7 +65,7 @@
             </div>
         </fieldset>
         <div class="form-group">
-            {{ form.submit(class="btn btn-outline-info")}}
+            {{ form.submit(class="btn btn-outline-info", onclick="loading();")}}
             <a class="btn btn-outline-info" href="{{url_for('new_manual_post')}}">Enter Book Manually</a>
         </div>
     </form>
