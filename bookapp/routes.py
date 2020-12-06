@@ -280,7 +280,7 @@ def notifications():
 @app.route('/post/<int:post_id>', methods=['GET','POST'])
 def post(post_id):
     post = Posts.query.get_or_404(post_id)
-    comment = Comments.query.filter_by(posts_id=post.id).all()
+    comment = Comments.query.filter_by(posts_id=post.id).order_by().all()
     ids = [item.user_id for item in comment]
     users = User.query.filter(User.id.in_(ids)).all()
 
@@ -332,7 +332,12 @@ def post(post_id):
                 comment = Comments(comment_text=cform.comment.data, user_id=current_user.id, posts_id=post.id)
                 db.session.add(comment)
                 db.session.commit()
-                notif = Notifications(comment_id=comment.id, post_id=post_id, user_id=post.author.id)
+                user = detectUsername(cform.comment.data)
+                if user:
+                    notif_user = User.query.filter_by(username=user).all()
+                    notif = Notifications(comment_id=comment.id, post_id=post_id, user_id=notif_user.id)
+                else:
+                    notif = Notifications(comment_id=comment.id, post_id=post_id, user_id=post.author.id)
                 db.session.add(notif)
                 db.session.commit()
                 flash("Your comment was posted successfully!", "success")
@@ -344,6 +349,19 @@ def post(post_id):
                 return redirect(url_for('post', post_id=post.id))
    
     return render_template('post.html', title=Posts.title, post=post, form=cform, comment=comments)
+
+
+def detectUsername(comment):
+    if "@" in comment:
+        li = comment.split()
+        for item in li:
+            if "@" in item:
+                item = item.strip("@,.?!")
+                return item
+            else:
+                continue
+    return None
+
 
 def notification_truth():
     if current_user.is_authenticated:
