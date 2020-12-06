@@ -18,14 +18,14 @@
               <div class="row">
                 <div class="span6">      
                   <ul class="list-group">
+                    <span class="label label-info">Author: {{ post.writers }}</span>
                     <span class="label label-info">Condition: {{ post.condition }}</span>
                     <span class="label label-info">Price: {{ post.price }}</span>
                     <span class="label label-info">Major: {{ post.major }}</span>
-                    <span class="label label-info">Author: {{ post.writers }}</span>
                     <span class="label label-info">ISBN: {{ post.isbn }}</span>
+                    <i class="icon-user"></i><a href="https://cash.app/${{post.author.payment_profile}}">Cashapp: ${{ post.author.payment_profile }}</a> 
                     <i class="icon-user"></i><a href="{{ url_for('user_post', username=post.author.username) }}">{{ post.author.username }}</a> 
 
-                    <i class="icon-user"></i><a href="https://cash.app/${{post.author.payment_profile}}">{{ post.author.payment_profile }}</a> 
                     <small class="text-muted">
                         {{ post.date_posted.strftime("%m-%d-%Y") }}
                     </small>
