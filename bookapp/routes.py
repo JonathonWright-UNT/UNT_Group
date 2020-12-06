@@ -190,8 +190,9 @@ def reset_token(token):
 def new_post():
     form = PostForm()
     if form.validate_on_submit():
-
-        data = getBookDetails(form.isbn.data)
+        data = False
+        if len(form.isbn.data) == 10 or len(form.isbn.data) == 13:
+            data = getBookDetails(form.isbn.data)
         if data:
             post = Posts(isbn=form.isbn.data, condition=form.condition.data, price=form.price.data, major=form.major.data, author=current_user, title=data['title'], publisher=data['publisher'], writers=data['author'], image_ref=data['imgCover'])
             db.session.add(post)
@@ -200,7 +201,7 @@ def new_post():
             return redirect('/home')
         else:
             flash("There was an error fetching your textbook.\nPlease Check your ISBN", "warning")
-            #return render_template('create_manually.html', title="New")
+            
     return render_template('create_post.html', title="New Post", form=form, legend='New Post')
 
 
@@ -243,7 +244,7 @@ def comments():
             "comment_time": c.comment_time.strftime("%m-%d-%Y %I:%M%p"), 
             "post_link": c.posts_id,
         })
-    print(comments)
+    
     return render_template('comments.html', title="My Comments", comment=comments)
 
 @app.route('/notifications')
@@ -366,7 +367,6 @@ def notification_truth():
     if current_user.is_authenticated:
         n = Notifications.query.filter_by(user_id=current_user.id, seen=False).all()
         if n:
-            print(n)
             return True
     return False
 

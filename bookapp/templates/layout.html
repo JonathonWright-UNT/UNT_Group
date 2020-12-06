@@ -78,7 +78,7 @@
                             {% if notification_truth %}
                                 <a class="list-group-item list-group-item-light" style="color: red;" href="{{ url_for('notifications')}}">Notifications</a>
                             {% else %}
-                                <li class="list-group-item list-group-item-light">Notifications</li>
+                                <a class="list-group-item list-group-item-light" href="{{ url_for('notifications')}}">Notifications</a>
                             {% endif %}
                             {% endwith %}
                         </ul>

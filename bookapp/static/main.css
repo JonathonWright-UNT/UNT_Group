@@ -54,7 +54,7 @@ body {
   .article-metadata {
     padding-bottom: 1px;
     margin-bottom: 4px;
-    border-bottom: 1px solid #e3e3e3
+    border-bottom: 1px solid #f9e0dc
   }
   
   .article-metadata a:hover {
@@ -115,7 +115,7 @@ body {
 	  width: 350px;
 	  padding: 0;
 	  border-radius: 10px;
-	  box-shadow: 0 0px 47px -4px #2d6e8b;
+	  box-shadow: 0 0px 47px -4px #48beff;
   }
   
   .right {
@@ -126,7 +126,7 @@ body {
 	  padding: 30px 10px 10px 10px;
 	  border-radius: 0 10px 10px 0;
 	  background-color: #bdbdbd;
-	  box-shadow: 0 0px 47px -4px #2d6e8b;
+	  box-shadow: 0 0px 47px -4px #48beff;
   }
   
   .right h1 {
