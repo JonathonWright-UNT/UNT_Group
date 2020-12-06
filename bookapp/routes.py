@@ -422,6 +422,9 @@ def delete_post(post_id):
         
     # delete comments
     for c in comments:
+        notif = Notifications.query.filter_by(comment_id=c.id).all()
+        for n in notif:
+            db.session.delete(n)
         db.session.delete(c)
 
     # delete posts
