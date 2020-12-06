@@ -216,17 +216,19 @@ def new_manual_post():
     form = PostForm()
     
     if form.validate_on_submit():
+        if form.title.data:
+            #no scraping for manual entry
+            #data = getBookDetails(form.isbn.data)
+            #image_file = url_for('static', filename='profile_pics/book.jpg')
 
-        #no scraping for manual entry
-        #data = getBookDetails(form.isbn.data)
-        #image_file = url_for('static', filename='profile_pics/book.jpg')
+            post = Posts(isbn=form.isbn.data, condition=form.condition.data, price=form.price.data, major=form.major.data, author=current_user, title=form.title.data)
+            
+            db.session.add(post)
+            db.session.commit()
 
-        post = Posts(isbn=form.isbn.data, condition=form.condition.data, price=form.price.data, major=form.major.data, author=current_user, title=form.title.data)
-        
-        db.session.add(post)
-        db.session.commit()
-
-        return redirect('/home')
+            return redirect('/home')
+        else:
+            flash("Please Enter a Title", "warning")
         
     return render_template('create_manually.html', title="New Manual Post", form=form, legend='New Manual Post')
 
