@@ -2,7 +2,7 @@ body {
     background: #d3c4e3;
     color: #333333;
     margin-top: 5rem;
-}
+  }
   
   h1, h2, h3, h4, h5, h6 {
     color: #444444;
@@ -75,7 +75,7 @@ body {
     margin-bottom: 16px;
   }
 
-  body{margin-top:20px;}
+  
 
   .comment-wrapper .panel-body {
       max-height:650px;
@@ -91,7 +91,7 @@ body {
   .comment-wrapper .media-list .media {
       border-bottom:1px dashed #efefef;
       margin-bottom:25px;
-  
+  }
   .account-heading {
     font-size: 2.5rem;
   }
@@ -163,4 +163,9 @@ body {
     color: #000000;
     background-color: #48beff;
     border-color: #48beff;
+  }
+
+  .align-right {
+    text-align: right;
+    border: 0;
   }

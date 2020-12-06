@@ -291,9 +291,9 @@ def post(post_id):
         is_saved = Saves.query.filter_by(user_id=current_user.id, posts_id=post_id).all()
 
         if is_saved:
-            cform.save.label.text = 'Remove from Saves'
+            cform.save.label.text = 'Unsave'
         else:
-            cform.save.label.text = 'Save Post'
+            cform.save.label.text = 'Save'
     else:
             cform.save.label.text = None
 
@@ -379,6 +379,8 @@ def update_post(post_id):
     if form.validate_on_submit():
         post.title = form.title.data
         post.condition = form.condition.data
+        post.price = form.price.data
+        post.major = form.major.data
         db.session.commit()
         flash("Your post was updated successfully!", "success")
         return redirect(url_for('post', post_id=post.id))
@@ -400,8 +402,11 @@ def delete_post(post_id):
     if post.author != current_user:
         abort(403)
         
+    # delete comments
     for c in comments:
         db.session.delete(c)
+
+    # delete posts
     db.session.delete(post)
     db.session.commit()
     flash("Your post has been deleted", "success")
