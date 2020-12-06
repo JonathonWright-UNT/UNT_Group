@@ -7,6 +7,7 @@ from flask import render_template, url_for, flash, redirect, request, abort
 from flask_wtf.file import FileField, FileAllowed
 from flask_login import login_user, current_user, logout_user, login_required
 from flask_mail import Message
+from sqlalchemy import or_
 from bookapp.forms import RegistrationForm, LoginForm, PostForm, UpdateAccountForm, RequestResetForm, ResetPasswordForm, CommentForm, SearchForm
 from bookapp.models import User, Posts, Saves, Comments, Notifications
 from bookapp import app, db, bcrypt, mail
@@ -31,7 +32,7 @@ def search():
             posts = Posts.query.filter(Posts.isbn.ilike(search)).order_by(Posts.date_posted.desc()).paginate(per_page=5, page=page)
         else:
             search = '%'.join(a for a in form.search.data)
-            posts = Posts.query.filter(Posts.title.contains(search)).order_by(Posts.date_posted.desc()).paginate(per_page=5, page=page)
+            posts = Posts.query.filter(or_(Posts.title.contains(search), Posts.writers.contains(search))).order_by(Posts.date_posted.desc()).paginate(per_page=5, page=page)
     else:
         posts = Posts.query.order_by(Posts.date_posted.desc()).paginate(per_page=5, page=page)
     if not posts:
