@@ -201,7 +201,7 @@ def new_post():
             return redirect('/home')
         else:
             flash("There was an error fetching your textbook.\nPlease Check your ISBN", "warning")
-            return render_template('create_post.html', title="New Post", form=form, legend='New Post')
+            # return render_template('create_post.html', title="New Post", form=form, legend='New Post')
     return render_template('create_post.html', title="New Post", form=form, legend='New Post')
 
 
@@ -369,6 +369,7 @@ def notification_truth():
         if n:
             return True
     return False
+
 
 app.jinja_env.globals.update(notification_truth=notification_truth)
 

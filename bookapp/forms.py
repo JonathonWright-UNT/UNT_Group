@@ -89,6 +89,10 @@ class PostForm(FlaskForm):
     price = StringField('Price', validators=[DataRequired()])
     major = StringField('Major', validators=[DataRequired()])
     submit = SubmitField('Post Book')
+
+    def validate_isbn(self, isbn):
+        if re.search(r'[^0-9^x^X]', str(isbn.data)):
+            raise ValidationError('Please submit a valid ISBN')
     
 class RequestResetForm(FlaskForm):
     email = StringField('Email', validators=[DataRequired()])

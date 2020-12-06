@@ -5,7 +5,7 @@
     <img src="https://media3.giphy.com/media/Mam839t1zmNyhxaMAu/giphy.gif">
 </div>
 <div id="content" class="content-section">
-    <form method="POST" action="">
+    <form method="POST" action="" onsubmit="loading();">
         {{ form.hidden_tag() }}
         <fieldset class="form-group">
             <legend class="border-bottom mb-4">
@@ -65,7 +65,7 @@
             </div>
         </fieldset>
         <div class="form-group">
-            {{ form.submit(class="btn btn-outline-info", onclick="loading();")}}
+            {{ form.submit(class="btn btn-outline-info")}}
             <a class="btn btn-outline-info" href="{{url_for('new_manual_post')}}">Enter Book Manually</a>
         </div>
     </form>
