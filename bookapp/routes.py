@@ -201,7 +201,7 @@ def new_post():
             return redirect('/home')
         else:
             flash("There was an error fetching your textbook.\nPlease Check your ISBN", "warning")
-            
+            return render_template('create_post.html', title="New Post", form=form, legend='New Post')
     return render_template('create_post.html', title="New Post", form=form, legend='New Post')
 
 
@@ -421,6 +421,9 @@ def delete_post(post_id):
         
     # delete comments
     for c in comments:
+        notif = Notifications.query.filter_by(comment_id=c.id).all()
+        for n in notif:
+            db.session.delete(n)
         db.session.delete(c)
 
     # delete posts

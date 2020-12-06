@@ -75,7 +75,13 @@ body {
     margin-bottom: 16px;
   }
 
-  
+  div#loading {
+    width: 35px;
+    height: 35px;
+    display: none;
+    background: url(/static/ajax-loader.gif) no-repeat;
+    cursor: wait;
+    }
 
   .comment-wrapper .panel-body {
       max-height:650px;
