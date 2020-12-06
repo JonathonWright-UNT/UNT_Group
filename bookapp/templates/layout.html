@@ -23,8 +23,8 @@
     <header class="site-header">
         <nav class="navbar navbar-expand-md navbar-dark bg-steel fixed-top">
             <div class="container">
-                <a class="navbar-brand mr-4" href="/">Eagle Books</a>
-                <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarToggle"
+                <a class="navbar-brand mr-4" href="/">Mean Green Books</a>
+                <!-- <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarToggle"
                     aria-controls="navbarToggle" aria-expanded="false" aria-label="Toggle navigation">
                     <span class="navbar-toggler-icon"></span>
                 </button> -->
@@ -52,7 +52,7 @@
     </header>
     <main role="main" class="container">
         <div class="row">
-            <div class="col-md-8">
+            <div class="col-8 justify-content-md-center">
                 {% with messages = get_flashed_messages(with_categories=true) %}
                 {% if messages %}
                   {% for category, message in messages %}
@@ -69,12 +69,18 @@
                 {% if current_user.is_authenticated %}
                     <div class="content-section">
                         <h3>My Stuff</h3>
-                        <p class='text-muted'>You can put any information here you'd like.
+                        <p class='text-muted'>
                         <ul class="list-group">
                             <a class="list-group-item list-group-item-light nav-link"  href="/posts/saves">Saved Posts</a>
                             <a class="list-group-item list-group-item-light" href="{{ url_for('user_post', username=current_user.username) }}">My Posts</a>
-                            <li class="list-group-item list-group-item-light">Calendars</li>
-                            <li class="list-group-item list-group-item-light">etc</li>
+                            <a class="list-group-item list-group-item-light" href="{{ url_for('comments') }}">Comments</a>
+                            {% with notification_truth = notification_truth() %}
+                            {% if notification_truth %}
+                                <a class="list-group-item list-group-item-light" style="color: red;" href="{{ url_for('notifications')}}">Notifications</a>
+                            {% else %}
+                                <a class="list-group-item list-group-item-light" href="{{ url_for('notifications')}}">Notifications</a>
+                            {% endif %}
+                            {% endwith %}
                         </ul>
                         </p>
                     </div>
@@ -88,6 +94,12 @@
 
 
     <!-- Optional JavaScript -->
+    <script type="text/javascript">// <![CDATA[
+        function loading(){
+            $("#loading").show();
+            $("#content").hide();       
+        }
+// ]]></script>
     <!-- jQuery first, then Popper.js, then Bootstrap JS -->
     <script src="https://code.jquery.com/jquery-3.2.1.slim.min.js"
         integrity="sha384-KJ3o2DKtIkvYIK3UENzmM7KCkRr/rE9/Qpg6aAZGJwFDMVNA/GpGFF93hXpG5KkN"

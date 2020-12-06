@@ -1,32 +1,50 @@
 {% extends "layout.html" %}
 {% block content %}
-    <article class="media content-section">
+    <article class="media content-section" style="overflow: hidden">
+        <div class="row" style="margin-left: 1.8vw;">
+            <div class="span4">
+              <div class="row">
+                <div class="span6">
+                  <h4><strong>{{ post.title }}</strong></h4>
+                </div>
+              </div>
+              <div class="row">
+                <div class="span2">
+                  <a href="#" class="thumbnail">
+                      <img src="{{ post.image_ref }} "  style="max-width: 400px; max-height: 500px;" alt="Book cover">
+                  </a>
+                </div>
+              </div>
+              <div class="row">
+                <div class="span6">      
+                  <ul class="list-group">
+                    <span class="label label-info">Condition: {{ post.condition }}</span>
+                    <span class="label label-info">Price: {{ post.price }}</span>
+                    <span class="label label-info">Major: {{ post.major }}</span>
+                    <span class="label label-info">Author: {{ post.writers }}</span>
+                    <span class="label label-info">ISBN: {{ post.isbn }}</span>
+                    <i class="icon-user"></i><a href="{{ url_for('user_post', username=post.author.username) }}">{{ post.author.username }}</a> 
+
+                    <i class="icon-user"></i><a href="https://cash.app/${{post.author.payment_profile}}">{{ post.author.payment_profile }}</a> 
+                    <small class="text-muted">
+                        {{ post.date_posted.strftime("%m-%d-%Y") }}
+                    </small>
+                </ul>
+                </div>
+              </div>
+            </div>
+        </div>
         <form method="POST" action="">
             {{ form.hidden_tag() }}
-            {% if current_user.is_authenticated %}
-                <div class="form-group">
-                    {{ form.save(class="btn btn-outline-info") }}
-                </div>
-            {% endif %}
-        <div class="media-body">
-            <div class="article-metadata">
-                <div id="coverImageContainer" class="imageContainer">
-                    <img class="image" id="coverImage" src="{{ post.image_ref }}" height="250" onerror="imgError(this);">
-                </div>
-                <a class="mr-2" href="#">{{ post.author.username }}</a>
-                <small class="text-muted">{{ post.date }}</small>
+            
+            <div class="form-group align-right" style="padding-left: 11vw;">
                 {% if post.author == current_user %}
-                    <div>
                         <a class="btn btn-secondary btn-sm mt-1 mb-1" href="{{ url_for('update_post', post_id=post.id) }}">Update</a>
                         <button type="button" class="btn btn-danger btn-sm m-1" data-toggle="modal" data-target="#deleteModal">Delete</button>
-                    </div>
+                {% elif current_user.is_authenticated %}
+                    {{ form.save(class="btn btn-secondary btn-sm mt-1 mb-1") }}
                 {% endif %}
             </div>
-            <h2 class="article-title">{{ post.title }}</h2>
-            <p class="article-description"> Condition: {{ post.condition }}</p>
-            <p class="article-price"> Price: {{ post.price }}</p>
-            <p class="article-major"> Major: {{ post.major }}</p>
-        </div>
     </article>
     <!-- Comment Section -->
     <div class="content-section">
@@ -57,22 +75,29 @@
         </form>
     </div>
 
-    <div class="comments-section">
-        <h3>Comments</h3>
-        {% for comments in comment %}
-        <div class="comment-list">
-            <div class="single-comment justify-content-between d-flex">
-                <div class="descinding">
-                    <a href="#">{{comments["username"]}}</a>
-                    <small class="date">{{comments["comment_time"]}}</small>
+    {% if comment %}
+    <div class="comments-section content-section">
+        <ul class="media-list">
+            <h3>Comments</h3>
+            {% for comments in comment %}
+            <hr>
+            <li class="media">
+                <a href="#" class="pull-left">
+                    <img src="{{url_for('static', filename='profile_pics/' + comments['img'])}}" alt="" class="rounded-circle article-img">
+                </a>
+                <div class="media-body">
+                    <span class="text-muted pull-right">
+                        <small class="text-muted">{{ comments['comment_time'] }}</small>
+                    </span>
+                    <strong class="text-success"><a href="{{ url_for('user_post', username=comments['username']) }}">{{ comments['username']}}</a></strong>
                     <p class="comment">
                         {{comments["comment_text"]}}
                     </p>
                 </div>
-            </div>
-        </div>
+            </li>
         {% endfor %}
     </div>
+    {% endif %}
        
         
 
@@ -90,7 +115,7 @@
             </button>
             </div>
             <div class="modal-body">
-            ...
+                This cannot be undone.
             </div>
             <div class="modal-footer">
             <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>

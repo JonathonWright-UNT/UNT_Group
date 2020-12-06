@@ -1,5 +1,5 @@
 body {
-    background: #fafafa;
+    background: #e1d5ec;
     color: #333333;
     margin-top: 5rem;
   }
@@ -9,11 +9,11 @@ body {
   }
   
   .bg-steel {
-    background-color: #5f788a;
+    background-color: #00853e;
   }
   
   .site-header .navbar-nav .nav-link {
-    color: #cbd5db;
+    color: #ffffff;
   }
   
   .site-header .navbar-nav .nav-link:hover {
@@ -25,20 +25,19 @@ body {
   }
   
   .content-section {
-    background: #ffffff;
+    background: #f9e0dc;
     padding: 10px 20px;
-    border: 1px solid #dddddd;
+    border: 1px solid #000000;
     border-radius: 3px;
     margin-bottom: 20px;
-    float: left;
   }
   
   .article-title {
-    color: #444444;
+    color: #000000;
   }
   
   a.article-title:hover {
-    color: #428bca;
+    color: #48beff;
     text-decoration: none;
   }
   
@@ -55,11 +54,11 @@ body {
   .article-metadata {
     padding-bottom: 1px;
     margin-bottom: 4px;
-    border-bottom: 1px solid #e3e3e3
+    border-bottom: 1px solid #f9e0dc
   }
   
   .article-metadata a:hover {
-    color: #333;
+    color: #ffffff;
     text-decoration: none;
   }
   
@@ -75,7 +74,30 @@ body {
     margin-right: 20px;
     margin-bottom: 16px;
   }
-  
+
+  div#loading {
+    width: 35px;
+    height: 35px;
+    display: none;
+    background: url(/static/ajax-loader.gif) no-repeat;
+    cursor: wait;
+    }
+
+  .comment-wrapper .panel-body {
+      max-height:650px;
+      overflow:auto;
+  }
+
+  .comment-wrapper .media-list .media img {
+      width:64px;
+      height:64px;
+      border:2px solid #e5e7e8;
+  }
+
+  .comment-wrapper .media-list .media {
+      border-bottom:1px dashed #efefef;
+      margin-bottom:25px;
+  }
   .account-heading {
     font-size: 2.5rem;
   }
@@ -99,18 +121,18 @@ body {
 	  width: 350px;
 	  padding: 0;
 	  border-radius: 10px;
-	  box-shadow: 0 0px 47px -4px #coral;
+	  box-shadow: 0 0px 47px -4px #48beff;
   }
   
   .right {
-	  border-left: 1px solid #acacac;
+	  border-left: 1px solid #bdbdbd;
 	  width: 350px;
 	  height: 350px;
 	  margin-top: 10px;
 	  padding: 30px 10px 10px 10px;
 	  border-radius: 0 10px 10px 0;
-	  backgroud-color: #ffffff;
-	  box-shadow: 0 0px 47px -4px #coral;
+	  background-color: #bdbdbd;
+	  box-shadow: 0 0px 47px -4px #48beff;
   }
   
   .right h1 {
@@ -133,8 +155,8 @@ body {
   }
   
   .links a:hover {
-	  color: #black;
-	  text-shadow: 0 1px 1px #coral;
+	  color: #000000;
+	  text-shadow: 0 1px 1px #2d6e8b;
 	  text-decoration: underline;
   }
   
@@ -143,4 +165,13 @@ body {
 	  height: 30px;
   }
   
+  .btn-info {
+    color: #000000;
+    background-color: #48beff;
+    border-color: #48beff;
+  }
+
+  .align-right {
+    text-align: right;
+    border: 0;
   }
