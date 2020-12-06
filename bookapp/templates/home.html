@@ -12,9 +12,10 @@
                 Price: {{ post.price }}
                 Author: {{ post.writers }}
                 ISBN: {{ post.isbn }}
+                
             </p>
             <a href="{{ url_for('user_post', username=post.author.username) }}"<small class="text-muted">{{ post.author.username }}</small></a>
-            <small class="text-muted">{{ post.date }}</small>
+            <small class="text-muted">{{ post.date_posted.strftime("%m-%d-%Y") }}</small>
             </div>
         </div>
     </div>

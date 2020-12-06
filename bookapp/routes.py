@@ -15,16 +15,11 @@ from bookapp.scrape import getBookDetails
 @app.route('/')
 @app.route('/home')
 def index():
-    search = request.args.get('search', None, type=str)
+    #search = request.args.get('search', None, type=str)
     page = request.args.get('page', 1, type=int)
-    if search:
-        if not re.search(r'[^0-9^x^X]', str(search)):
-            posts = Posts.query.filter(Posts.isbn.ilike(search)).paginate(per_page=5, page=page)
-        else:
-            search = '%'.join(a for a in search)
-            posts = Posts.query.filter(Posts.title.contains(search)).paginate(per_page=5, page=page)
-    else:
-        posts = Posts.query.paginate(per_page=5, page=page)
+    
+    
+    posts = Posts.query.order_by(Posts.date_posted.desc()).paginate(per_page=5, page=page)
     return render_template('home.html', posts=posts)
 
 @app.route('/search', methods=["GET", "POST"])
@@ -33,12 +28,12 @@ def search():
     page = request.args.get('page', 1, type=int)
     if form.validate_on_submit():
         if not re.search(r'[^0-9^x^X]', str(form.search.data)):
-            posts = Posts.query.filter(Posts.isbn.ilike(search)).paginate(per_page=5, page=page)
+            posts = Posts.query.filter(Posts.isbn.ilike(search)).order_by(Posts.date_posted.desc()).paginate(per_page=5, page=page)
         else:
             search = '%'.join(a for a in form.search.data)
-            posts = Posts.query.filter(Posts.title.contains(search)).paginate(per_page=5, page=page)
+            posts = Posts.query.filter(Posts.title.contains(search)).order_by(Posts.date_posted.desc()).paginate(per_page=5, page=page)
     else:
-        posts = Posts.query.paginate(per_page=5, page=page)
+        posts = Posts.query.order_by(Posts.date_posted.desc()).paginate(per_page=5, page=page)
     if not posts:
         flash(f'No books found')
     return render_template('search.html', posts=posts, title="Search", form=form)
@@ -223,8 +218,10 @@ def new_manual_post():
 
         #no scraping for manual entry
         #data = getBookDetails(form.isbn.data)
+        #image_file = url_for('static', filename='profile_pics/book.jpg')
+
+        post = Posts(isbn=form.isbn.data, condition=form.condition.data, price=form.price.data, major=form.major.data, author=current_user, title=form.title.data)
         
-        post = Posts(isbn=form.isbn.data, condition=form.condition.data, price=form.price.data, major=form.major.data, author=current_user, title=form.title.data, writers="Gene Simmons")
         db.session.add(post)
         db.session.commit()
 
@@ -234,6 +231,7 @@ def new_manual_post():
 
 
 @app.route('/comments')
+@login_required
 def comments():
     comment = Comments.query.filter_by(user_id=current_user.id).all()
     comments = []
@@ -242,13 +240,14 @@ def comments():
             "username": current_user.username,
             "img": current_user.image_file,
             "comment_text": c.comment_text,
-            "comment_time": c.comment_time.strftime("%d-%m-%Y %I:%M%p"), 
+            "comment_time": c.comment_time.strftime("%m-%d-%Y %I:%M%p"), 
             "post_link": c.posts_id,
         })
     print(comments)
     return render_template('comments.html', title="My Comments", comment=comments)
 
 @app.route('/notifications')
+@login_required
 def notifications():
     notifs = Notifications.query.filter_by(user_id=current_user.id).order_by(Notifications.seen==False).all()
     for notif in notifs:
@@ -270,7 +269,7 @@ def notifications():
                 "username": user.username,
                 "img": user.image_file,
                 "comment_text": c.comment_text,
-                "comment_time": c.comment_time.strftime("%d-%m-%Y %I:%M%p"),
+                "comment_time": c.comment_time.strftime("%m-%d-%Y %I:%M%p"),
                 "post_link": c.posts_id,
             })
 
@@ -280,7 +279,7 @@ def notifications():
 @app.route('/post/<int:post_id>', methods=['GET','POST'])
 def post(post_id):
     post = Posts.query.get_or_404(post_id)
-    comment = Comments.query.filter_by(posts_id=post.id).order_by().all()
+    comment = Comments.query.filter_by(posts_id=post.id).order_by(Comments.comment_time.desc()).all()
     ids = [item.user_id for item in comment]
     users = User.query.filter(User.id.in_(ids)).all()
 
@@ -309,7 +308,7 @@ def post(post_id):
                 "username": user.username,
                 "img": user.image_file,
                 "comment_text": c.comment_text,
-                "comment_time": c.comment_time.strftime("%d-%m-%Y %I:%M%p")
+                "comment_time": c.comment_time.strftime("%m-%d-%Y %I:%M%p")
             })
     
     #cform.comment.data = "Enter text here"     
