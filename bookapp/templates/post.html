@@ -47,9 +47,10 @@
             </div>
     </article>
     <!-- Comment Section -->
+    {% if current_user.is_authenticated %}
     <div class="content-section">
         
-            {% if current_user.is_authenticated %}
+            
                 <fieldset class="form-group">
                     
                     <div class="form-group">
@@ -71,10 +72,10 @@
                 <div class="form-group">
                     {{ form.submit(class="btn btn-outline-info")}}
                 </div>
-            {% endif %}
+           
         </form>
     </div>
-
+    {% endif %}
     {% if comment %}
     <div class="comments-section content-section">
         <ul class="media-list">
