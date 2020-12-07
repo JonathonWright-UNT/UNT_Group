@@ -103,7 +103,7 @@ def account():
         current_user.major = form.major.data
         current_user.payment_profile = form.payment_profile.data
         db.session.commit()
-        flash('Your account has been updated!', 'success')
+        flash('Your account has been updated!', category='success')
         return redirect(url_for('account'))
     elif request.method == 'GET':
         form.username.data = current_user.username
@@ -317,8 +317,10 @@ def post(post_id):
                 db.session.add(comment)
                 db.session.commit()
                 user = detectUsername(cform.comment.data)
+                print(user)
                 if user:
-                    notif_user = User.query.filter_by(username=user).all()
+                    notif_user = User.query.filter_by(username=user).first()
+                    print(notif_user)
                     notif = Notifications(comment_id=comment.id, post_id=post_id, user_id=notif_user.id)
                 else:
                     notif = Notifications(comment_id=comment.id, post_id=post_id, user_id=post.author.id)
@@ -400,7 +402,7 @@ def update_post(post_id):
 def delete_post(post_id):
     post = Posts.query.get_or_404(post_id)
     comments = Comments.query.filter_by(posts_id=post.id).all()
-    
+    saves = Saves.query.filter_by(posts_id=post.id).all()
     if post.author != current_user:
         abort(403)
         
@@ -410,6 +412,9 @@ def delete_post(post_id):
         for n in notif:
             db.session.delete(n)
         db.session.delete(c)
+
+    for s in saves:
+        db.session.delete(s)
 
     # delete posts
     db.session.delete(post)
