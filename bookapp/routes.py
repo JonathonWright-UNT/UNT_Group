@@ -199,7 +199,7 @@ def new_post():
             db.session.add(post)
             db.session.commit()
             flash("Your post has been created.", "success")
-            return redirect('/home')
+            return redirect(url_for('post', post_id=post.id))
         else:
             flash("There was an error fetching your textbook.\nPlease Check your ISBN", "warning")
             # return render_template('create_post.html', title="New Post", form=form, legend='New Post')
@@ -312,6 +312,7 @@ def post(post_id):
                 "username": user.username,
                 "img": user.image_file,
                 "comment_text": c.comment_text,
+                "id": c.id,
                 "comment_time": c.comment_time.strftime("%m-%d-%Y %I:%M%p")
             })
     
@@ -435,3 +436,20 @@ def delete_post(post_id):
     db.session.commit()
     flash("Your post has been deleted", "success")
     return redirect('/home')
+
+@app.route('/comment/<int:comment_id>/delete', methods=['POST'])
+@login_required
+def delete_comment(comment_id):
+    comment = Comments.query.get_or_404(comment_id)
+    if comment.user_id != current_user.id:
+        abort(403)
+    post = request.args.get('post', type=int)
+
+    # delete comments
+    notif = Notifications.query.filter_by(comment_id=comment_id).all()
+    for n in notif:
+        db.session.delete(n)
+    db.session.delete(comment)
+    db.session.commit()
+    flash("Your comment has been deleted", "success")
+    return redirect(url_for('post', post_id=post))
