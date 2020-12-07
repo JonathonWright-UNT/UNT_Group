@@ -34,6 +34,8 @@ class RegistrationForm(FlaskForm):
         user = User.query.filter_by(username=username.data).first()
         if user:
             raise ValidationError('Username is taken')
+        if not all([x.isalnum() for x in username.data]):
+            raise ValidationError('Username may not contain special characters')
 
     def validate_email(self, email):
         user = User.query.filter_by(email=email.data).first()
@@ -70,6 +72,8 @@ class UpdateAccountForm(FlaskForm):
             user = User.query.filter_by(username=username.data).first()
             if user:
                 raise ValidationError('That username is taken. Please choose a different one.')
+            if not all([x.isalnum() for x in username.data]):
+                raise ValidationError('Username may not contain special characters')
 
     def validate_email(self, email):
         if email.data != current_user.email:
