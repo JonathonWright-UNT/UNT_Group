@@ -36,7 +36,7 @@ def search():
     else:
         posts = Posts.query.order_by(Posts.date_posted.desc()).paginate(per_page=5, page=page)
     if not posts:
-        flash(f'No books found')
+        flash('No books found', 'warning')
     return render_template('search.html', posts=posts, title="Search", form=form)
 
 @app.route('/user/<username>')
@@ -81,7 +81,7 @@ def login():
             next_page = request.args.get('next')
             return redirect(next_page) if next_page else redirect(url_for('index'))
         else:
-            flash(f'Login failed, please check email and password')
+            flash(f'Login failed, please check email and password', 'warning')
     return render_template('login.html', title="Login", form=form)
 
 @app.route('/logout')
@@ -309,7 +309,7 @@ def post(post_id):
             else:
                 db.session.delete(is_saved[0])
                 db.session.commit()
-                flash('This post has been removed from saves.')
+                flash('This post has been removed from saves.', 'warning')
                 return redirect(url_for('post', post_id=post_id))        
         else:
             if cform.comment.data != "Enter text here":
