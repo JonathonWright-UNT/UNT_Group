@@ -19,6 +19,9 @@
                 <div class="span6">      
                   <ul class="list-group">
                     <span class="label label-info">Author: {{ post.writers }}</span>
+                    {% if post.publisher %}
+                        <span class="label label-info">Publisher: {{ post.publisher }}</span>
+                    {% endif %}
                     <span class="label label-info">Condition: {{ post.condition }}</span>
                     <span class="label label-info">Price: {{ post.price }}</span>
                     <span class="label label-info">Major: {{ post.major }}</span>
