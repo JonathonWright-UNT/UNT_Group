@@ -7,6 +7,7 @@ from flask import render_template, url_for, flash, redirect, request, abort
 from flask_wtf.file import FileField, FileAllowed
 from flask_login import login_user, current_user, logout_user, login_required
 from flask_mail import Message
+from sqlalchemy import or_
 from bookapp.forms import RegistrationForm, LoginForm, PostForm, UpdateAccountForm, RequestResetForm, ResetPasswordForm, CommentForm, SearchForm
 from bookapp.models import User, Posts, Saves, Comments, Notifications
 from bookapp import app, db, bcrypt, mail
@@ -31,7 +32,7 @@ def search():
             posts = Posts.query.filter(Posts.isbn.ilike(search)).order_by(Posts.date_posted.desc()).paginate(per_page=5, page=page)
         else:
             search = '%'.join(a for a in form.search.data)
-            posts = Posts.query.filter(Posts.title.contains(search)).order_by(Posts.date_posted.desc()).paginate(per_page=5, page=page)
+            posts = Posts.query.filter(or_(Posts.title.contains(search), Posts.writers.contains(search))).order_by(Posts.date_posted.desc()).paginate(per_page=5, page=page)
     else:
         posts = Posts.query.order_by(Posts.date_posted.desc()).paginate(per_page=5, page=page)
     if not posts:
@@ -124,26 +125,6 @@ def save_picture(form_picture):
     i.save(picture_path)
 
     return picture_fn
-        
-# @app.route("/account", methods=['GET', 'POST'])
-# @login_required
-# def account():
-#     form = UpdateAccountForm()
-#     if form.validate_on_submit():
-#         if form.picture.data:
-#             picture_file = save_picture(form.picture.data)
-#             current_user.image_file = picture_file
-#         current_user.username = form.username.data
-#         current_user.email = form.email.data
-#         db.session.commit()
-#         flash('Your account has been updated!', 'success')
-#         return redirect(url_for('account'))
-#     elif request.method == 'GET':
-#         form.username.data = current_user.username
-#         form.email.data = current_user.email
-#     image_file = url_for('static', filename='profile_pics/' + current_user.image_file)
-#     return render_template('account.html', title='Account',
-#                           image_file=image_file, form=form)
                           
 def send_reset_email(user):
     token = user.get_reset_token()
@@ -161,7 +142,7 @@ def reset_request():
         return redirect('/home')
     form = RequestResetForm()
     if form.validate_on_submit():
-        user = User.query.filter_by(email=form.email.data).first()
+        user = User.query.filter_by(email=form.email.data.lower()).first()
         send_reset_email(user)
         flash('An email has been sent with instructions to reset your password.', 'info')
         return redirect(url_for('login'))
@@ -198,10 +179,10 @@ def new_post():
             db.session.add(post)
             db.session.commit()
             flash("Your post has been created.", "success")
-            return redirect('/home')
+            return redirect(url_for('post', post_id=post.id))
         else:
             flash("There was an error fetching your textbook.\nPlease Check your ISBN", "warning")
-            return render_template('create_post.html', title="New Post", form=form, legend='New Post')
+            # return render_template('create_post.html', title="New Post", form=form, legend='New Post')
     return render_template('create_post.html', title="New Post", form=form, legend='New Post')
 
 
@@ -216,17 +197,19 @@ def new_manual_post():
     form = PostForm()
     
     if form.validate_on_submit():
+        if form.title.data:
+            #no scraping for manual entry
+            #data = getBookDetails(form.isbn.data)
+            #image_file = url_for('static', filename='profile_pics/book.jpg')
 
-        #no scraping for manual entry
-        #data = getBookDetails(form.isbn.data)
-        #image_file = url_for('static', filename='profile_pics/book.jpg')
+            post = Posts(isbn=form.isbn.data, condition=form.condition.data, price=form.price.data, major=form.major.data, author=current_user, title=form.title.data)
+            
+            db.session.add(post)
+            db.session.commit()
 
-        post = Posts(isbn=form.isbn.data, condition=form.condition.data, price=form.price.data, major=form.major.data, author=current_user, title=form.title.data)
-        
-        db.session.add(post)
-        db.session.commit()
-
-        return redirect('/home')
+            return redirect('/home')
+        else:
+            flash("Please Enter a Title", "warning")
         
     return render_template('create_manually.html', title="New Manual Post", form=form, legend='New Manual Post')
 
@@ -309,6 +292,7 @@ def post(post_id):
                 "username": user.username,
                 "img": user.image_file,
                 "comment_text": c.comment_text,
+                "id": c.id,
                 "comment_time": c.comment_time.strftime("%m-%d-%Y %I:%M%p")
             })
     
@@ -369,6 +353,7 @@ def notification_truth():
         if n:
             return True
     return False
+
 
 app.jinja_env.globals.update(notification_truth=notification_truth)
 
@@ -431,3 +416,20 @@ def delete_post(post_id):
     db.session.commit()
     flash("Your post has been deleted", "success")
     return redirect('/home')
+
+@app.route('/comment/<int:comment_id>/delete', methods=['POST'])
+@login_required
+def delete_comment(comment_id):
+    comment = Comments.query.get_or_404(comment_id)
+    if comment.user_id != current_user.id:
+        abort(403)
+    post = request.args.get('post', type=int)
+
+    # delete comments
+    notif = Notifications.query.filter_by(comment_id=comment_id).all()
+    for n in notif:
+        db.session.delete(n)
+    db.session.delete(comment)
+    db.session.commit()
+    flash("Your comment has been deleted", "success")
+    return redirect(url_for('post', post_id=post))
